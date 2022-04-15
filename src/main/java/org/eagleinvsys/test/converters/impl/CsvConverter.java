@@ -1,9 +1,15 @@
 package org.eagleinvsys.test.converters.impl;
 
+import com.opencsv.CSVWriter;
 import org.eagleinvsys.test.converters.Converter;
-import org.eagleinvsys.test.converters.ConvertibleCollection;
+import org.eagleinvsys.test.dto.ConvertibleCollection;
+import org.eagleinvsys.test.dto.ConvertibleMessage;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class CsvConverter implements Converter {
 
@@ -15,7 +21,26 @@ public class CsvConverter implements Converter {
      */
     @Override
     public void convert(ConvertibleCollection collectionToConvert, OutputStream outputStream) {
-        // TODO: implement
+        try(CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream), DEFAULT_SPLITERATOR)) {
+            Collection<String> headers = collectionToConvert.getHeaders();
+            int headersCount = headers.size();
+
+            String[] headersArray = headers.toArray(String[]::new);
+            writer.writeNext(headersArray);
+
+            Iterable<ConvertibleMessage> records = collectionToConvert.getRecords();
+            Iterator<ConvertibleMessage> recordsIterator = records.iterator();
+            String[] recordsArray;
+            while (recordsIterator.hasNext()) {
+                recordsArray = new String[headersCount];
+                for (int i = 0; i < headersCount; i++) {
+                    recordsArray[i] = recordsIterator.next().getElement(String.valueOf(i));
+                }
+                writer.writeNext(recordsArray);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

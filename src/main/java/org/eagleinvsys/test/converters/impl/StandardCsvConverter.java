@@ -1,10 +1,15 @@
 package org.eagleinvsys.test.converters.impl;
 
 import org.eagleinvsys.test.converters.StandardConverter;
+import org.eagleinvsys.test.dto.ConvertibleMessage;
+import org.eagleinvsys.test.dto.impl.DefaultConvertibleCollection;
+import org.eagleinvsys.test.dto.impl.DefaultConvertibleMessage;
 
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StandardCsvConverter implements StandardConverter {
 
@@ -22,7 +27,12 @@ public class StandardCsvConverter implements StandardConverter {
      */
     @Override
     public void convert(List<Map<String, String>> collectionToConvert, OutputStream outputStream) {
-        // TODO: implement by using csvConverter
+        Collection<String> headers = collectionToConvert.get(0).keySet();
+        Iterable<ConvertibleMessage> records = collectionToConvert.stream()
+                .map(map -> map.values().toArray(String[]::new))
+                .map(DefaultConvertibleMessage::new)
+                .collect(Collectors.toList());
+        csvConverter.convert( new DefaultConvertibleCollection(headers, records), outputStream);
     }
 
 }
