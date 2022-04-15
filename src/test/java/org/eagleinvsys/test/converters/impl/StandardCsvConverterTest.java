@@ -3,7 +3,7 @@ package org.eagleinvsys.test.converters.impl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class StandardCsvConverterTests {
+class StandardCsvConverterTest {
 
     @BeforeEach
     void setUp() {
