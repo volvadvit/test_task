@@ -11,7 +11,9 @@ public interface StandardConverter {
      *
      * @param collectionToConvert collection to convert. All maps must have the same set of keys
      * @param outputStream        output stream to write results to
+     *
+     * @throws IllegalArgumentException if any of params has bad format
      */
-    void convert(List<Map<String, String>> collectionToConvert, OutputStream outputStream);
+    void convert(List<Map<String, String>> collectionToConvert, OutputStream outputStream) throws IllegalArgumentException;
 
 }

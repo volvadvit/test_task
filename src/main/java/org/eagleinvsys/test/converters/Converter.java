@@ -16,7 +16,9 @@ public interface Converter {
      *
      * @param collectionToConvert collection to convert
      * @param outputStream        output stream to write results to
+     *
+     * @throws IllegalArgumentException if any of params has bad format
      */
-    void convert(ConvertibleCollection collectionToConvert, OutputStream outputStream);
+    void convert(ConvertibleCollection collectionToConvert, OutputStream outputStream) throws IllegalArgumentException;
 
 }

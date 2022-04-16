@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.eagleinvsys.test.constants.ConverterCommonConstants.ERROR_COLLECTION_MESSAGE;
+import static org.eagleinvsys.test.constants.ConverterCommonConstants.ERROR_OUTPUTSTREAM_MESSAGE;
+
 public class StandardCsvConverter implements StandardConverter {
 
     private final CsvConverter csvConverter;
@@ -24,9 +27,17 @@ public class StandardCsvConverter implements StandardConverter {
      *
      * @param collectionToConvert collection to convert to CSV format. All maps must have the same set of keys
      * @param outputStream        output stream to write CSV conversion result as text to
+     *
+     * @throws IllegalArgumentException if any of params has bad format
      */
     @Override
-    public void convert(List<Map<String, String>> collectionToConvert, OutputStream outputStream) {
+    public void convert(List<Map<String, String>> collectionToConvert, OutputStream outputStream) throws IllegalArgumentException {
+        if (collectionToConvert == null) {
+            throw new IllegalArgumentException(ERROR_COLLECTION_MESSAGE);
+        }
+        if (outputStream == null) {
+            throw new IllegalArgumentException(ERROR_OUTPUTSTREAM_MESSAGE);
+        }
         Collection<String> headers = collectionToConvert.get(0).keySet();
         Iterable<ConvertibleMessage> records = collectionToConvert.stream()
                 .map(map -> map.values().toArray(String[]::new))
@@ -34,5 +45,4 @@ public class StandardCsvConverter implements StandardConverter {
                 .collect(Collectors.toList());
         csvConverter.convert( new DefaultConvertibleCollection(headers, records), outputStream);
     }
-
 }

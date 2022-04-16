@@ -11,6 +11,9 @@ import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static org.eagleinvsys.test.constants.ConverterCommonConstants.ERROR_COLLECTION_MESSAGE;
+import static org.eagleinvsys.test.constants.ConverterCommonConstants.ERROR_OUTPUTSTREAM_MESSAGE;
+
 public class CsvConverter implements Converter {
 
     /**
@@ -18,9 +21,17 @@ public class CsvConverter implements Converter {
      *
      * @param collectionToConvert collection to convert to CSV format
      * @param outputStream        output stream to write CSV conversion result as text to
+     *
+     * @throws IllegalArgumentException if any of params has bad format
      */
     @Override
-    public void convert(ConvertibleCollection collectionToConvert, OutputStream outputStream) {
+    public void convert(ConvertibleCollection collectionToConvert, OutputStream outputStream) throws IllegalArgumentException {
+        if (collectionToConvert == null) {
+            throw new IllegalArgumentException(ERROR_COLLECTION_MESSAGE);
+        }
+        if (outputStream == null) {
+            throw new IllegalArgumentException(ERROR_OUTPUTSTREAM_MESSAGE);
+        }
         try(CSVWriter writer = new CSVWriter(new OutputStreamWriter(outputStream), DEFAULT_SPLITERATOR)) {
             Collection<String> headers = collectionToConvert.getHeaders();
             int headersCount = headers.size();
@@ -33,8 +44,9 @@ public class CsvConverter implements Converter {
             String[] recordsArray;
             while (recordsIterator.hasNext()) {
                 recordsArray = new String[headersCount];
+                ConvertibleMessage message = recordsIterator.next();
                 for (int i = 0; i < headersCount; i++) {
-                    recordsArray[i] = recordsIterator.next().getElement(String.valueOf(i));
+                    recordsArray[i] = message.getElement(String.valueOf(i));
                 }
                 writer.writeNext(recordsArray);
             }
